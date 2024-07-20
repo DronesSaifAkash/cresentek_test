@@ -1,11 +1,15 @@
 <?php
 
+use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\ExampleController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use App\Models\User;
 
 Route::get('/', function () {
@@ -54,4 +58,51 @@ Route::prefix('admin')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard'); // Assuming you have a view at resources/views/admin/dashboard.blade.php
     })->name('admindashboard');
+});
+
+
+// Point No 16.
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::post('/users/{user}/delete', [UserController::class, 'softDelete'])->name('users.softDelete');
+
+// Point No 17.
+Route::get('/user/name', function () {
+    return response()->json(['name' => User::find(1)->name]);
+});
+
+Route::get('/user/latest-phone/{id}', [UserController::class, 'showLatestPhone']);
+Route::post('/user/{id}/phone', [UserController::class, 'savePhone']);
+// {"message":"Failed to save phone number"} using postman and content-type : applicatin/json
+
+
+
+
+Route::post('/user/{id}/update-password', function (Request $request, $id) {
+    try{
+
+        $validatedData = $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'password.required' => 'The password field is required.',
+            'password.min' => 'The password must be at least 8 characters.',
+            'password.confirmed' => 'The password confirmation does not match.',
+        ]);
+
+        
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $user->password = $validatedData['password'];
+        $user->save();
+
+        return response()->json(['message' => 'Password updated successfully']);
+    } catch (ValidationException $e) {
+        return response()->json([
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422);
+    }
 });

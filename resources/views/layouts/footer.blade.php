@@ -8,13 +8,14 @@
 </div>
 <style>
    .footer {
-    position: fixed;
+    
     bottom: 0;
     width: 100%;
     background-color: #f1f1f1;
     padding: 20px;
     text-align: center;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    margin-top:100px;
 }
 
 .footer h2 {

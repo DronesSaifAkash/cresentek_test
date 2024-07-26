@@ -12,10 +12,10 @@ class PostSeeder extends Seeder
 {
     public function run()
     {
-        $users = User::all();
+        $users = User::limit(60)->get();
 
         foreach ($users as $user) {
-            for ($i = 0; $i < 20; $i++) {
+            for ($i = 0; $i < 10; $i++) {
                 Post::create([
                     'user_id' => $user->id,
                     'title' => 'Post Title ' . $i,

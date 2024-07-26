@@ -6,15 +6,21 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = Auth::user()->posts;
         return view('posts.index', compact('posts'));
     }
 
@@ -31,7 +37,7 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        Post::create($request->validated());
+        Auth::user()->posts()->create($request->validated());
 
 
         return redirect()->route('posts.index')
@@ -43,6 +49,11 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        if ($post->user_id !== Auth::id()) {
+            return redirect()->route('posts.index')
+                             ->with('error', 'Unauthorized access.');
+        }
+
         return view('posts.show', compact('post'));
     }
 
@@ -51,6 +62,11 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        if ($post->user_id !== Auth::id()) {
+            return redirect()->route('posts.index')
+                             ->with('error', 'Unauthorized access.');
+        }
+
         return view('posts.edit', compact('post'));
     }
 
@@ -59,6 +75,12 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
+
+        if ($post->user_id !== Auth::id()) {
+            return redirect()->route('posts.index')
+                             ->with('error', 'Unauthorized access.');
+        }
+
         $post->update($request->validated());
 
         return redirect()->route('posts.index')
@@ -70,6 +92,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        if ($post->user_id !== Auth::id()) {
+            return redirect()->route('posts.index')
+                             ->with('error', 'Unauthorized access.');
+        }
+
         $post->delete();
 
         return redirect()->route('posts.index')

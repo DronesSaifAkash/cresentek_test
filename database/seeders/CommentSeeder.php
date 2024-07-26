@@ -10,13 +10,13 @@ class CommentSeeder extends Seeder
 {
     public function run()
     {
-        $posts = Post::all();
+        $posts = Post::limit(60)->get();
 
         foreach ($posts as $post) {
             for ($i = 0; $i < 3; $i++) {
                 Comment::create([
                     'post_id' => $post->id,
-                    'user_id' => $post->user_id, // Assuming the comment is from the same user as the post
+                    'user_id' => $post->user_id,
                     'content' => 'This is a comment for post ' . $post->id . ' - comment ' . $i,
                 ]);
             }

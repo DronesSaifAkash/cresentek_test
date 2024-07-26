@@ -12,10 +12,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // it takes time more than 6 hours.
         // $this->call(UserSeeder::class);
+
         $this->call([
-            // PostSeeder::class,
+            PostSeeder::class,
             CommentSeeder::class,
+            CategorySeeder::class,
         ]);
     }
 }

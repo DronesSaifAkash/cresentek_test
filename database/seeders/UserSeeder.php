@@ -10,19 +10,13 @@ use Illuminate\Support\Facades\Log;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    
     public function run()
     {
-        $batchSize = 10; // Number of records per batch
+        $batchSize = 1000; // Number of records per batch
         $totalRecords = 100000; // Total records to insert
 
-        Log::info('Seeder started');
-
         for ($i = 0; $i < $totalRecords; $i += $batchSize) {
-            Log::info('Starting batch ' . (($i / $batchSize) + 1));
-
             $records = [];
 
             for ($j = 0; $j < $batchSize; $j++) {
@@ -39,12 +33,10 @@ class UserSeeder extends Seeder
 
             try {
                 DB::table('users')->insert($records);
-                Log::info("Inserted batch " . (($i / $batchSize) + 1) . " of " . ($totalRecords / $batchSize));
             } catch (\Exception $e) {
                 Log::error('Error inserting batch ' . (($i / $batchSize) + 1) . ': ' . $e->getMessage());
             }
         }
-
-        Log::info('Seeder completed');
     }
+    
 }

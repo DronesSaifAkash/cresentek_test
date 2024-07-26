@@ -1,6 +1,8 @@
 <?php
 
+
 use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
@@ -25,16 +27,14 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/fetch-users', function () {
     DB::table('users')->orderBy('id')->chunk(1000, function ($users) {
         foreach ($users as $user) {
-
             // dd($users); // This will output the first chunk of users and stop execution, allowing you to see the data structure.
-
             echo $user->id . ': ' . $user->name . '<br>';
         }
     });
 });
 
 
-Route::resource('posts', PostController::class);
+Route::resource('posts', PostController::class)->middleware('auth');
 
 Route::get('example-index', [ExampleController::class, 'index']);
 
@@ -75,8 +75,6 @@ Route::post('/user/{id}/phone', [UserController::class, 'savePhone']);
 // {"message":"Failed to save phone number"} using postman and content-type : applicatin/json
 
 
-
-
 Route::post('/user/{id}/update-password', function (Request $request, $id) {
     try{
 
@@ -87,8 +85,7 @@ Route::post('/user/{id}/update-password', function (Request $request, $id) {
             'password.min' => 'The password must be at least 8 characters.',
             'password.confirmed' => 'The password confirmation does not match.',
         ]);
-
-        
+   
         $user = User::find($id);
 
         if (!$user) {
@@ -106,3 +103,21 @@ Route::post('/user/{id}/update-password', function (Request $request, $id) {
         ], 422);
     }
 });
+
+
+// point no 21
+Route::get('/show-first-last', function () {
+    $items = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+
+    return view('show-first-last', compact('items'));
+});
+
+
+Route::get('/user/{id}/profile-picture', [UserProfileController::class, 'showUploadForm']);
+Route::post('/user/{id}/profile-picture', [UserProfileController::class, 'updateProfilePicture']);
+
+// Point no 24.
+Route::get('/user-count', [UserController::class, 'getUserCount']);
+
+// Point no 25.
+Route::get('/max-comments-per-user', [UserController::class, 'showMaxCommentsPerUser']);

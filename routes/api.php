@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ApiPostController;
@@ -13,8 +14,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/login', [AuthController::class, 'login']);
-// for all user email is user$n n >=1 & <= 100000: {
-//     "email": "user1@example.com",
+// for all user email is user.$n where n >=1 & <= 100000: {
+//     "email": "user{$n}@example.com",
 //     "password": "password"
 // }
 
@@ -27,4 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
             'email' => $request->user()->email,
         ]);
     });
+
+    Route::post('/user/{id}/profile-picture', [UserProfileController::class, 'updateProfilePicture']);
 });
+
+
+

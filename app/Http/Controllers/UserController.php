@@ -81,4 +81,22 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Password updated successfully']);
     }
+
+
+    public function getUserCount()
+    {
+        $userCount = User::count();
+        return response()->json(['total_users' => $userCount]);
+    }
+
+    public function showMaxCommentsPerUser()
+    {
+        $users = User::with('comments')->get();
+
+        $maxComments = $users->max(function ($user) {
+            return $user->comments->count();
+        });
+
+        return view('users.max-comments', compact('users', 'maxComments'));
+    }
 }

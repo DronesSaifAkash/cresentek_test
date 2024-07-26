@@ -4,8 +4,8 @@
     <h1>Create New Post</h1>
 
     @if ($errors->any())
-        <div>
-            <ul>
+        <div class="alert alert-danger">
+            <ul class="mb-0">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -15,18 +15,14 @@
 
     <form action="{{ route('posts.store') }}" method="POST">
         @csrf
-        <div>
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" value="{{ old('title') }}">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title:</label>
+            <input type="text" id="title" name="title" class="form-control" value="{{ old('title') }}">
         </div>
-        <div>
-            <label for="description">Description:</label>
-            <textarea id="description" name="description">{{ old('description') }}"></textarea>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description:</label>
+            <textarea id="description" name="description" class="form-control">{{ old('description') }}</textarea>
         </div>
-        <div>
-            <label for="comments">Comments:</label>
-            <textarea id="comments" name="comments">{{ old('comments') }}"></textarea>
-        </div>
-        <button type="submit">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 @endsection
